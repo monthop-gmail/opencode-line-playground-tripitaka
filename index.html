@@ -186,10 +186,26 @@
     };
 
     let currentView = 'home';
+    let currentCouncilId = null;
+
+    function saveState() {
+      localStorage.setItem('tripitaka_view', currentView);
+      localStorage.setItem('tripitaka_council', currentCouncilId || '');
+    }
+
+    function loadState() {
+      currentView = localStorage.getItem('tripitaka_view') || 'home';
+      currentCouncilId = localStorage.getItem('tripitaka_council') || null;
+    }
 
     function render() {
       const content = document.getElementById('content');
       const breadcrumb = document.getElementById('breadcrumb');
+      
+      if (currentCouncilId) {
+        showCouncilDetail(currentCouncilId);
+        return;
+      }
       
       if (currentView === 'home') {
         breadcrumb.classList.add('hidden');
@@ -257,19 +273,24 @@
 
     function showCouncil() {
       currentView = 'council';
+      currentCouncilId = null;
+      saveState();
       render();
     }
 
     function showPitaka() {
       currentView = 'pitaka';
+      saveState();
       render();
     }
 
     function showCouncilDetail(id) {
+      currentCouncilId = id;
       const council = data.councils.find(c => c.id === id);
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.classList.remove('hidden');
       document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคยานา</span> > ' + council.name;
+      saveState();
       
       let html = `
         <div class="back-btn" onclick="showCouncil()">← กลับ</div>
@@ -330,9 +351,12 @@
 
     function goHome() {
       currentView = 'home';
+      currentCouncilId = null;
+      saveState();
       render();
     }
 
+    loadState();
     render();
     
     if ('serviceWorker' in navigator) {
