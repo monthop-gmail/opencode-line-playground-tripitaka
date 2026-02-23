@@ -260,7 +260,7 @@
         html += `
           <h3 style="color:#92400e;margin:20px 0 10px;">📖 สุตตันตปิฏก - นิกาย</h3>
           ${council.nikayas.map((n, idx) => `
-            <div class="card" onclick="showNikayaDetail(${c.id}, '${n.name}')">
+            <div class="card" onclick="showNikayaDetail(${council.id}, '${n.name}')">
               <div class="card-header">
                 <h3>${n.name}</h3>
                 <span class="count">${n.count} สูตร</span>
