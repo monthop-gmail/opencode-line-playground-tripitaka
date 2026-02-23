@@ -1,28 +1,61 @@
-# 📿 พระไตรปิฏก PWA
+# 📿 พระไตรปิฏก - Tripitaka PWA
 
 เว็บแอป PWA สำหรับศึกษาพระไตรปิฏก สังคยานา และพระสูตร
 
-## 🚀 Quick Start
+**Live**: https://opencode-line-playground-tripitaka.pages.dev
+
+## Features
+
+- สังคยานา 3 ครั้ง — ปฐม ทุติย ตติยสังคยานา พร้อมรายละเอียด
+- พระไตรปิฏก 3 ปิฏก — วินัย สุตตันต์ อภิธรรม
+- สุตตันตปิฏก 5 นิกาย — ทีฆ มัชฌิม สังยุตต อังคุตตร ขุททก
+- อภิธรรมปิฏก 7 คัมภีร์
+- PWA — ติดตั้งเป็นแอปบนมือถือได้ รองรับ Offline
+
+## Tech Stack
+
+- Single-page HTML + CSS + JavaScript (ไม่มี framework)
+- PWA: Service Worker + Web App Manifest
+- Hosted on Cloudflare Pages
+- CI/CD: GitHub Actions → auto deploy on push to main
+
+## Development
 
 ```bash
-# Clone
 git clone https://github.com/monthop-gmail/opencode-line-playground-tripitaka.git
 cd opencode-line-playground-tripitaka
 
-# แก้ไข code
-# ...
+# เปิดทดสอบ local
+open index.html
+# หรือใช้ live server
+npx serve .
+```
 
-# Commit & Push
+## Project Structure
+
+```
+├── index.html       # หน้าหลัก (HTML + CSS + JS ในไฟล์เดียว)
+├── manifest.json    # PWA manifest
+├── sw.js            # Service Worker (offline cache)
+├── README.md
+└── .github/
+    └── workflows/
+        ├── ci.yml       # PR check (linked issue)
+        └── deploy.yml   # Auto deploy to Cloudflare Pages
+```
+
+## Deploy
+
+Push to `main` → GitHub Actions auto deploy to Cloudflare Pages
+
+```bash
 git add -A
 git commit -m "message"
 git push
 ```
 
-## 🔄 CI/CD
+## Links
 
-- **Issue**: https://github.com/monthop-gmail/opencode-line-playground-tripitaka/issues
-- **Deploy**: Auto deploy หลัง push ไป Cloudflare Pages
-
-## 📞 ติดต่อ
-
-https://github.com/monthop-gmail/opencode-line-playground-tripitaka/issues
+- **Live site**: https://opencode-line-playground-tripitaka.pages.dev
+- **Issues**: https://github.com/monthop-gmail/opencode-line-playground-tripitaka/issues
+- **Playground template**: https://github.com/monthop-gmail/opencode-line-playground-template-000
