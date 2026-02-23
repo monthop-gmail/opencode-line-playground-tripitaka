@@ -163,13 +163,43 @@
     let currentCouncilId = null;
 
     function saveState() {
+      // Save to both localStorage and URL hash
       localStorage.setItem('tripitaka_v3_view', currentView);
       localStorage.setItem('tripitaka_v3_council', currentCouncilId || '');
+      
+      // Update URL hash for bookmarking/refreshing
+      if (currentView === 'home') {
+        history.replaceState(null, '', window.location.pathname);
+      } else if (currentView === 'council' && currentCouncilId) {
+        history.replaceState(null, '', '#/council/' + currentCouncilId);
+      } else if (currentView === 'council') {
+        history.replaceState(null, '', '#/council');
+      } else if (currentView === 'pitaka') {
+        history.replaceState(null, '', '#/pitaka');
+      }
     }
 
     function loadState() {
+      // First check URL hash
+      const hash = window.location.hash;
+      if (hash.startsWith('#/council/')) {
+        currentView = 'detail';
+        currentCouncilId = parseInt(hash.split('/')[2]);
+        return;
+      } else if (hash === '#/council') {
+        currentView = 'council';
+        currentCouncilId = null;
+        return;
+      } else if (hash === '#/pitaka') {
+        currentView = 'pitaka';
+        currentCouncilId = null;
+        return;
+      }
+      
+      // Fallback to localStorage
       currentView = localStorage.getItem('tripitaka_v3_view') || 'home';
       currentCouncilId = localStorage.getItem('tripitaka_v3_council') || null;
+      if (currentCouncilId) currentCouncilId = parseInt(currentCouncilId);
     }
 
     function render() {
