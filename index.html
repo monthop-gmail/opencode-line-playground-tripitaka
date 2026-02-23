@@ -92,11 +92,33 @@
           location: 'เมืองราชคฤห์',
           participants: 'พระอรหันต์ 500 รูป',
           nikayas: [
-            { name: 'ทีฆนิกาย', thai: 'Digha Nikaya', count: 34, desc: 'สูตรยาว ธรรมะเชิงลึก' },
-            { name: 'มัชฌิมนิกาย', thai: 'Majjhima Nikaya', count: 152, desc: 'สูตรกลาง สอนปฏิบัติ' },
-            { name: 'สังยุตตนิกาย', thai: 'Samyutta Nikaya', count: 2889, desc: 'พระสูตรจัดหมวดหมู่' },
-            { name: 'อังคุตตรนิกาย', thai: 'Anguttara Nikaya', count: 2308, desc: 'พระสูตรจัดตามตัวเลข' },
-            { name: 'ขุททกนิกาย', thai: 'Khuddaka Nikaya', count: 15, desc: 'คัมภีร์เบ็ดเตล็ด' }
+            { name: 'ทีฆนิกาย', thai: 'Digha Nikaya', count: 34, desc: 'สูตรยาว ธรรมะเชิงลึก', 
+              sutras: [
+                { name: 'พระสูตร 1 - บาลี', desc: 'ธรรมะเรื่องการเห็นแจ้ง' },
+                { name: 'พระสูตร 2 - สามวังชีวิต', desc: 'วิถีชีวิตอย่างถูกต้อง' },
+                { name: 'พระสูตร 3 - โสตาปปานสูตร', desc: 'เรื่องโสตาปปานผู้เฒ่า' }
+              ] },
+            { name: 'มัชฌิมนิกาย', thai: 'Majjhima Nikaya', count: 152, desc: 'สูตรกลาง สอนปฏิบัติ',
+              sutras: [
+                { name: 'มหาชาดก', desc: 'เรื่องพระมหาชาดก' },
+                { name: 'เตชัสสูตร', desc: 'เรื่องความเพียร' },
+                { name: 'อนุปุพพิสูตร', desc: 'ฐานะที่ควรยกย่อง' }
+              ] },
+            { name: 'สังยุตตนิกาย', thai: 'Samyutta Nikaya', count: 2889, desc: 'พระสูตรจัดหมวดหมู่',
+              sutras: [
+                { name: 'สังยุตต์ สคาถวรรค', desc: 'คาถาต่างๆ' },
+                { name: 'สังยุตต์ นิเวศวรรค', desc: 'เรื่องสิ่งแวดล้อม' }
+              ] },
+            { name: 'อังคุตตรนิกาย', thai: 'Anguttara Nikaya', count: 2308, desc: 'พระสูตรจัดตามตัวเลข',
+              sutras: [
+                { name: 'เอกทุกข์', desc: 'ความทุกข์ 1 อย่าง' },
+                { name: 'ทุกข์ 2', desc: 'ความทุกข์ 2 อย่าง' }
+              ] },
+            { name: 'ขุททกนิกาย', thai: 'Khuddaka Nikaya', count: 15, desc: 'คัมภีร์เบ็ดเตล็ด',
+              sutras: [
+                { name: 'ธรรมจักร', desc: 'วงจรธรรม' },
+                { name: 'จักกับวะ', desc: 'คำถาม 4 ข้อ' }
+              ] }
           ],
           abhidharma: [
             { name: 'ธัมมสังคณะ', desc: 'การจำแนกธรรม 121 อย่าง' },
@@ -159,13 +181,14 @@
 
     let currentView = 'home';
     let currentCouncilId = null;
+    let currentNikaya = null;
+    let breadcrumbStack = [];
 
     function saveState() {
-      // Save to both localStorage and URL hash
       localStorage.setItem('tripitaka_v3_view', currentView);
       localStorage.setItem('tripitaka_v3_council', currentCouncilId || '');
+      localStorage.setItem('tripitaka_v3_nikaya', currentNikaya || '');
       
-      // Update URL hash for bookmarking/refreshing
       if (currentView === 'home') {
         history.replaceState(null, '', window.location.pathname);
       } else if (currentView === 'council' && currentCouncilId) {
@@ -174,15 +197,21 @@
         history.replaceState(null, '', '#/council');
       } else if (currentView === 'pitaka') {
         history.replaceState(null, '', '#/pitaka');
+      } else if (currentView === 'nikaya' && currentCouncilId && currentNikaya) {
+        history.replaceState(null, '', '#/council/' + currentCouncilId + '/' + encodeURIComponent(currentNikaya));
       }
     }
 
     function loadState() {
-      // First check URL hash
       const hash = window.location.hash;
       if (hash.startsWith('#/council/')) {
+        const parts = hash.split('/');
         currentView = 'detail';
-        currentCouncilId = parseInt(hash.split('/')[2]);
+        currentCouncilId = parseInt(parts[2]);
+        if (parts[3]) {
+          currentNikaya = decodeURIComponent(parts[3]);
+          currentView = 'nikaya';
+        }
         return;
       } else if (hash === '#/council') {
         currentView = 'council';
@@ -194,15 +223,20 @@
         return;
       }
       
-      // Fallback to localStorage
       currentView = localStorage.getItem('tripitaka_v3_view') || 'home';
       currentCouncilId = localStorage.getItem('tripitaka_v3_council') || null;
+      currentNikaya = localStorage.getItem('tripitaka_v3_nikaya') || null;
       if (currentCouncilId) currentCouncilId = parseInt(currentCouncilId);
     }
 
     function render() {
       const content = document.getElementById('content');
       const breadcrumb = document.getElementById('breadcrumb');
+      
+      if (currentNikaya && currentCouncilId) {
+        showNikayaDetail(currentCouncilId, currentNikaya);
+        return;
+      }
       
       if (currentCouncilId) {
         showCouncilDetail(currentCouncilId);
@@ -288,6 +322,7 @@
 
     function showCouncilDetail(id) {
       currentCouncilId = id;
+      currentNikaya = null;
       currentView = 'detail';
       const council = data.councils.find(c => c.id === id);
       const breadcrumb = document.getElementById('breadcrumb');
@@ -309,8 +344,8 @@
       if (council.nikayas) {
         html += `
           <h3 style="color:#92400e;margin:20px 0 10px;">📖 สุตตันตปิฏก - นิกาย</h3>
-          ${council.nikayas.map(n => `
-            <div class="card">
+          ${council.nikayas.map((n, idx) => `
+            <div class="card" onclick="showNikayaDetail(${c.id}, '${n.name}')">
               <div class="card-header">
                 <h3>${n.name}</h3>
                 <span class="count">${n.count} สูตร</span>
@@ -347,6 +382,44 @@
             </div>
           `).join('')}
         `;
+      }
+      
+      document.getElementById('content').innerHTML = html;
+    }
+
+    function showNikayaDetail(councilId, nikayaName) {
+      const council = data.councils.find(c => c.id === councilId);
+      const nikaya = council.nikayas.find(n => n.name === nikayaName);
+      currentCouncilId = councilId;
+      currentNikaya = nikayaName;
+      currentView = 'nikaya';
+      
+      const breadcrumb = document.getElementById('breadcrumb');
+      breadcrumb.classList.remove('hidden');
+      document.getElementById('breadcrumb-text').innerHTML = 
+        ' > <span onclick="showCouncil()">สังคยานา</span> > <span onclick="showCouncilDetail(' + councilId + ')">' + council.name + '</span> > ' + nikayaName;
+      saveState();
+      
+      let html = `
+        <div class="back-btn" onclick="showCouncilDetail(${councilId})">← กลับ</div>
+        <div class="card">
+          <h2>${nikaya.name}</h2>
+          <p>${nikaya.thai || ''}</p>
+          <p>${nikaya.desc}</p>
+          <p class="count" style="display:inline-block;margin-top:8px;">${nikaya.count} สูตร</p>
+        </div>
+        <h3 style="color:#92400e;margin:20px 0 10px;">📜 รายการสูตร</h3>
+      `;
+      
+      if (nikaya.sutras && nikaya.sutras.length > 0) {
+        html += nikaya.sutras.map(s => `
+          <div class="card">
+            <h3>${s.name}</h3>
+            <p>${s.desc}</p>
+          </div>
+        `).join('');
+      } else {
+        html += '<div class="card"><p>รายละเอียดกำลังอัปเดต...</p></div>';
       }
       
       document.getElementById('content').innerHTML = html;
