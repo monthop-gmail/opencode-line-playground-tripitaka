@@ -202,8 +202,10 @@
             <span class="count">${c.year}</span>
           </div>
           <p>📍 ${c.location}</p>
-          <p>👤 ${c.participants}</p>
-          ${c.description ? `<p>${c.description}</p>` : ''}
+          <p>👤 ประธาน: ${c.president || c.participants}</p>
+          <p>🕐 ${c.duration || ''} | ${c.participants}</p>
+          ${c.patron && c.patron !== 'ไม่ปรากฏ' ? `<p>👑 อุปถัมภ์: ${c.patron}</p>` : ''}
+          ${c.cause ? `<p style="font-size:0.8rem;color:#888;margin-top:4px;">สาเหตุ: ${c.cause}</p>` : ''}
           ${c.nikayas ? `<p class="count" style="display:inline-block;margin-top:8px;">สุตตันต์ 5 นิกาย</p>` : ''}
           ${c.abhidharma ? `<p class="count" style="display:inline-block;margin-top:8px;margin-left:8px;">อภิธรรม 7 คัมภีร์</p>` : ''}
           ${c.vinaya ? `<p class="count" style="display:inline-block;margin-top:8px;margin-left:8px;">วินัยปิฏก</p>` : ''}
@@ -250,9 +252,13 @@
         <div class="card">
           <h2>${council.name}</h2>
           <p><strong>ปี:</strong> ${council.year}</p>
-          <p><strong>สถาน:</strong> ${council.location}</p>
-          <p><strong>ผู้ร่วม:</strong> ${council.participants}</p>
-          ${council.description ? `<p>${council.description}</p>` : ''}
+          <p><strong>สถานที่:</strong> ${council.location}</p>
+          <p><strong>ประธาน:</strong> ${council.president || '-'}</p>
+          <p><strong>ผู้เข้าร่วม:</strong> ${council.participants}</p>
+          <p><strong>ระยะเวลา:</strong> ${council.duration || '-'}</p>
+          <p><strong>ผู้อุปถัมภ์:</strong> ${council.patron || '-'}</p>
+          ${council.cause ? `<p><strong>สาเหตุ:</strong> ${council.cause}</p>` : ''}
+          ${council.description ? `<p style="margin-top:8px;color:#555;">${council.description}</p>` : ''}
         </div>
       `;
       
