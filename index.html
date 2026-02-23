@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>พระไตรปิฏก - Tripitaka PWA</title>
-  <link rel="manifest" href="manifest.json?v=3">
+  <!--VERSION:manifest-->
+  <link rel="manifest" href="manifest.json?v=VERSION_PLACEHOLDER">
+  <!--/VERSION-->
   <meta name="theme-color" content="#f59e0b">
   <meta name="description" content="พระไตรปิฏก สังคยานา และพระสูตร - Tripitaka PWA">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -21,18 +23,8 @@
       padding: 20px;
     }
     .container { max-width: 600px; margin: 0 auto; }
-    h1 {
-      text-align: center;
-      color: #92400e;
-      margin-bottom: 8px;
-      font-size: 1.8rem;
-    }
-    .subtitle {
-      text-align: center;
-      color: #b45309;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-    }
+    h1 { text-align: center; color: #92400e; margin-bottom: 8px; font-size: 1.8rem; }
+    .subtitle { text-align: center; color: #b45309; margin-bottom: 20px; font-size: 0.9rem; }
     .breadcrumb {
       background: white;
       padding: 10px 15px;
@@ -53,15 +45,8 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; }
     .card h3 { color: #92400e; font-size: 1.1rem; }
     .card .count {
       background: #f59e0b;
@@ -71,17 +56,6 @@
       font-size: 0.8rem;
     }
     .card p { color: #666; font-size: 0.9rem; margin-top: 8px; }
-    .details {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #e5e7eb;
-    }
-    .detail-item {
-      padding: 8px 0;
-      border-bottom: 1px dashed #e5e7eb;
-    }
-    .detail-item:last-child { border-bottom: none; }
-    .detail-item strong { color: #b45309; }
     .icon { margin-right: 8px; }
     .back-btn {
       display: inline-block;
@@ -124,7 +98,7 @@
             { name: 'มัชฌิมนิกาย', thai: 'Majjhima Nikaya', count: 152, desc: 'สูตรกลาง สอนปฏิบัติ' },
             { name: 'สังยุตตนิกาย', thai: 'Samyutta Nikaya', count: 2889, desc: 'พระสูตรจัดหมวดหมู่' },
             { name: 'อังคุตตรนิกาย', thai: 'Anguttara Nikaya', count: 2308, desc: 'พระสูตรจัดตามตัวเลข' },
-            { name: 'ขุททกนิกาย', thai: 'Khuddaka Nikaya', count: 15, desc: 'คัมภีร์เบ็ดเตล็ด (ธัมมปทัฏฐาน, ชาดก, อปทาน, บุรพที่ชื่อ)' }
+            { name: 'ขุททกนิกาย', thai: 'Khuddaka Nikaya', count: 15, desc: 'คัมภีร์เบ็ดเตล็ด' }
           ],
           abhidharma: [
             { name: 'ธัมมสังคณะ', desc: 'การจำแนกธรรม 121 อย่าง' },
@@ -145,7 +119,7 @@
           year: '300 ก่อนพ.ศ.',
           location: 'เมืองเวสาลี',
           participants: 'พระอรหันต์ 700 รูป',
-          description: 'แยกความแตกต่างวินัย 10 ประเด็น (10 ปุญญัติ) รักษาความบริสุทธิ์ของพระธรรมวินัย',
+          description: 'แยกความแตกต่างวินัย 10 ประเด็น',
           vinaya: [
             { name: 'ปาจิตบท', count: 227, desc: 'พระวินัย 227 ข้อ' }
           ]
@@ -156,7 +130,7 @@
           year: '250 ก่อนพ.ศ.',
           location: 'เมืองปาฏลีบุตร',
           participants: 'พระอรหันต์ 1,000 รูป',
-          description: 'ท่านมหากัสสปะเป็นประธาน แบ่งพระไตรปิฏกเป็น 3 ปิฏกอย่างชัดเจน',
+          description: 'ท่านมหากัสสปะเป็นประธาน',
           nikayas: [
             { name: 'ทีฆนิกาย', count: 34, desc: 'สูตรยาว' },
             { name: 'มัชฌิมนิกาย', count: 152, desc: 'สูตรกลาง' },
@@ -286,6 +260,7 @@
 
     function showCouncilDetail(id) {
       currentCouncilId = id;
+      currentView = 'detail';
       const council = data.councils.find(c => c.id === id);
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.classList.remove('hidden');
@@ -360,7 +335,7 @@
     render();
     
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=3');
+      navigator.serviceWorker.register('sw.js?v=VERSION_PLACEHOLDER');
     }
   </script>
 </body>

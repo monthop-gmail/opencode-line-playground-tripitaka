@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tripitaka-v1';
+const CACHE_NAME = 'tripitaka-VERSION_PLACEHOLDER';
 const urlsToCache = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', event => {
