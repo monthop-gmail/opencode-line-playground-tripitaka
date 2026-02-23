@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>พระไตรปิฏก - Tripitaka PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f59e0b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📿</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Sarabun', 'Noto Sans TH', sans-serif;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      color: #92400e;
+      margin-bottom: 8px;
+      font-size: 1.8rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #b45309;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    .breadcrumb {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 0.85rem;
+      color: #666;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .breadcrumb span { color: #d97706; cursor: pointer; }
+    .breadcrumb span:hover { text-decoration: underline; }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card h3 { color: #92400e; font-size: 1.1rem; }
+    .card .count {
+      background: #f59e0b;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    .card p { color: #666; font-size: 0.9rem; margin-top: 8px; }
+    .details {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .detail-item {
+      padding: 8px 0;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+    .detail-item:last-child { border-bottom: none; }
+    .detail-item strong { color: #b45309; }
+    .icon { margin-right: 8px; }
+    .back-btn {
+      display: inline-block;
+      background: #f59e0b;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    .back-btn:hover { background: #d97706; }
+    .hidden { display: none; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>📿 พระไตรปิฏก</h1>
+    <p class="subtitle">สังคยานา และพระสูตร</p>
+    
+    <div id="breadcrumb" class="breadcrumb hidden">
+      <span onclick="goHome()">หน้าหลัก</span> <span id="breadcrumb-text"></span>
+    </div>
+    
+    <div id="content"></div>
+  </div>
+
+  <script>
+    const data = {
+      councils: [
+        {
+          id: 1,
+          name: 'ปฐมสังคยานา',
+          year: '400 ก่อนพ.ศ.',
+          location: 'เมืองราชคฤห์',
+          participants: 'พระอรหันต์ 500 รูป',
+          nikayas: [
+            { name: 'ทีฆนิกาย', thai: 'Digha Nikaya', count: 34, desc: 'สูตรยาว ธรรมะเชิงลึก' },
+            { name: 'มัชฌิมนิกาย', thai: 'Majjhima Nikaya', count: 152, desc: 'สูตรกลาง สอนปฏิบัติ' },
+            { name: 'สังยุตตนิกาย', thai: 'Samyutta Nikaya', count: 2889, desc: 'พระสูตรจัดหมวดหมู่' },
+            { name: 'อังคุตตรนิกาย', thai: 'Anguttara Nikaya', count: 2308, desc: 'พระสูตรจัดตามตัวเลข' },
+            { name: 'ขุททกนิกาย', thai: 'Khuddaka Nikaya', count: 15, desc: 'คัมภีร์เบ็ดเตล็ด (ธัมมปทัฏฐาน, ชาดก, อปทาน, บุรพที่ชื่อ)' }
+          ],
+          abhidharma: [
+            { name: 'ธัมมสังคณะ', desc: 'การจำแนกธรรม 121 อย่าง' },
+            { name: 'วิภังค์', desc: 'การวิเคราะห์ธรรม 18 บท' },
+            { name: 'ธัมมาติกา', desc: 'การจำแนกธรรมตามธาตุ' },
+            { name: 'ปุคคลบูรณะ', desc: 'บุคคล 52 ประเภท' },
+            { name: 'กัตติจุทธานะ', desc: 'ข้อถกเถียงทางธรรม' },
+            { name: 'ยมก', desc: 'คู่มือการศึกษา' },
+            { name: 'ปัญญาปติศาสตร์', desc: 'เหตุผล 24 ประการ' }
+          ],
+          vinaya: [
+            { name: 'ปาจิตบท', count: 227, desc: 'พระวินัย 227 ข้อ' }
+          ]
+        },
+        {
+          id: 2,
+          name: 'ทุติยสังคยานา',
+          year: '300 ก่อนพ.ศ.',
+          location: 'เมืองเวสาลี',
+          participants: 'พระอรหันต์ 700 รูป',
+          description: 'แยกความแตกต่างวินัย 10 ประเด็น (10 ปุญญัติ) รักษาความบริสุทธิ์ของพระธรรมวินัย'
+        },
+        {
+          id: 3,
+          name: 'ตติยสังคยานา',
+          year: '250 ก่อนพ.ศ.',
+          location: 'เมืองปาฏลีบุตร',
+          participants: 'พระอรหันต์ 1,000 รูป',
+          description: 'ท่านมหากัสสปะเป็นประธาน แบ่งพระไตรปิฏกเป็น 3 ปิฏกอย่างชัดเจน',
+          nikayas: [
+            { name: 'ทีฆนิกาย', count: 34, desc: 'สูตรยาว' },
+            { name: 'มัชฌิมนิกาย', count: 152, desc: 'สูตรกลาง' },
+            { name: 'สังยุตตนิกาย', count: 2889, desc: 'พระสูตรจัดหมวด' },
+            { name: 'อังคุตตรนิกาย', count: 2308, desc: 'พระสูตรตัวเลข' },
+            { name: 'ขุททกนิกาย', count: 15, desc: 'คัมภีร์เบ็ดเตล็ด' }
+          ],
+          abhidharma: [
+            { name: 'ธัมมสังคณะ', desc: 'จำแนกธรรม 121' },
+            { name: 'วิภังค์', desc: 'วิเคราะห์ 18 บท' },
+            { name: 'ธัมมาติกา', desc: 'ธาตุ' },
+            { name: 'ปุคคลบูรณะ', desc: '52 ประเภท' },
+            { name: 'กัตติจุทธานะ', desc: 'ถกเถียง' },
+            { name: 'ยมก', desc: 'คู่มือ' },
+            { name: 'ปัญญาปติศาสตร์', desc: '24 เหตุผล' }
+          ]
+        }
+      ],
+      pitakas: [
+        { id: 'vinaya', name: 'วินัยปิฏก', icon: '⚖️', desc: 'กฎเกณฑ์สำหรับพระภิกษุสงฆ์' },
+        { id: 'suttanta', name: 'สุตตันตปิฏก', icon: '📖', desc: 'พระธรรมเทศนา คำสอนของพระพุทธเจ้า' },
+        { id: 'abhidharma', name: 'อภิธรรมปิฏก', icon: '🧠', desc: 'คำสอนเชิงปรัชญาและวิภาษวิธี' }
+      ]
+    };
+
+    let currentView = 'home';
+
+    function render() {
+      const content = document.getElementById('content');
+      const breadcrumb = document.getElementById('breadcrumb');
+      
+      if (currentView === 'home') {
+        breadcrumb.classList.add('hidden');
+        content.innerHTML = renderHome();
+      } else if (currentView === 'council') {
+        breadcrumb.classList.remove('hidden');
+        document.getElementById('breadcrumb-text').innerHTML = ' > สังคยานา';
+        content.innerHTML = renderCouncilList();
+      } else if (currentView === 'pitaka') {
+        breadcrumb.classList.remove('hidden');
+        document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคยานา</span> > ปิฏก';
+        content.innerHTML = renderPitakaList();
+      } else if (currentView === 'detail') {
+        breadcrumb.classList.remove('breadcrumb-text');
+        content.innerHTML = renderDetail();
+      }
+    }
+
+    function renderHome() {
+      return `
+        <div class="card" onclick="showCouncil()">
+          <div class="card-header">
+            <h3>📜 สังคยานา 3 ครั้ง</h3>
+            <span class="count">3</span>
+          </div>
+          <p>การรวบรวมพระไตรปิฏก 3 ครั้งตลอด 150 ปี</p>
+        </div>
+        <div class="card" onclick="showPitaka()">
+          <div class="card-header">
+            <h3>🏛️ พระไตรปิฏก 3 ปิฏก</h3>
+            <span class="count">3</span>
+          </div>
+          <p>วินัย สุตตันต์ และอภิธรรม</p>
+        </div>
+      `;
+    }
+
+    function renderCouncilList() {
+      return data.councils.map(c => `
+        <div class="card" onclick="showCouncilDetail(${c.id})">
+          <div class="card-header">
+            <h3>${c.id}. ${c.name}</h3>
+            <span class="count">${c.year}</span>
+          </div>
+          <p>📍 ${c.location}</p>
+          <p>👤 ${c.participants}</p>
+          ${c.description ? `<p>${c.description}</p>` : ''}
+          ${c.nikayas ? `<p class="count" style="display:inline-block;margin-top:8px;">สุตตันต์ 5 นิกาย</p>` : ''}
+          ${c.abhidharma ? `<p class="count" style="display:inline-block;margin-top:8px;margin-left:8px;">อภิธรรม 7 คัมภีร์</p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderPitakaList() {
+      return data.pitakas.map(p => `
+        <div class="card" onclick="alert('ดูรายละเอียด ${p.name}')">
+          <div class="card-header">
+            <h3>${p.icon} ${p.name}</h3>
+          </div>
+          <p>${p.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    function showCouncil() {
+      currentView = 'council';
+      render();
+    }
+
+    function showPitaka() {
+      currentView = 'pitaka';
+      render();
+    }
+
+    function showCouncilDetail(id) {
+      const council = data.councils.find(c => c.id === id);
+      const breadcrumb = document.getElementById('breadcrumb');
+      breadcrumb.classList.remove('hidden');
+      document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคยานา</span> > ' + council.name;
+      
+      let html = `
+        <div class="back-btn" onclick="showCouncil()">← กลับ</div>
+        <div class="card">
+          <h2>${council.name}</h2>
+          <p><strong>ปี:</strong> ${council.year}</p>
+          <p><strong>สถาน:</strong> ${council.location}</p>
+          <p><strong>ผู้ร่วม:</strong> ${council.participants}</p>
+          ${council.description ? `<p>${council.description}</p>` : ''}
+        </div>
+      `;
+      
+      if (council.nikayas) {
+        html += `
+          <h3 style="color:#92400e;margin:20px 0 10px;">📖 สุตตันตปิฏก - นิกาย</h3>
+          ${council.nikayas.map(n => `
+            <div class="card">
+              <div class="card-header">
+                <h3>${n.name}</h3>
+                <span class="count">${n.count} สูตร</span>
+              </div>
+              <p>${n.thai || ''}</p>
+              <p>${n.desc}</p>
+            </div>
+          `).join('')}
+        `;
+      }
+      
+      if (council.abhidharma) {
+        html += `
+          <h3 style="color:#92400e;margin:20px 0 10px;">🧠 อภิธรรมปิฏก</h3>
+          ${council.abhidharma.map(a => `
+            <div class="card">
+              <h3>${a.name}</h3>
+              <p>${a.desc}</p>
+            </div>
+          `).join('')}
+        `;
+      }
+      
+      if (council.vinaya) {
+        html += `
+          <h3 style="color:#92400e;margin:20px 0 10px;">⚖️ วินัยปิฏก</h3>
+          ${council.vinaya.map(v => `
+            <div class="card">
+              <div class="card-header">
+                <h3>${v.name}</h3>
+                <span class="count">${v.count} ข้อ</span>
+              </div>
+              <p>${v.desc}</p>
+            </div>
+          `).join('')}
+        `;
+      }
+      
+      document.getElementById('content').innerHTML = html;
+    }
+
+    function goHome() {
+      currentView = 'home';
+      render();
+    }
+
+    render();
+    
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
