@@ -67,6 +67,64 @@
     }
     .back-btn:hover { background: #d97706; }
     .hidden { display: none; }
+    .search-wrap {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border: 2px solid #fde68a;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: white;
+      color: #333;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input:focus { border-color: #f59e0b; }
+    .search-wrap input::placeholder { color: #bbb; }
+    .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #999;
+      cursor: pointer;
+      display: none;
+    }
+    .search-clear.show { display: block; }
+    .search-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .badge-council { background: #dbeafe; color: #1e40af; }
+    .badge-sutta { background: #dcfce7; color: #166534; }
+    .badge-abhidhamma { background: #f3e8ff; color: #6b21a8; }
+    .badge-vinaya { background: #fef3c7; color: #92400e; }
+    .badge-pitaka { background: #ffe4e6; color: #9f1239; }
+    .search-result-card {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .search-result-card:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+    .search-result-card h4 { color: #374151; font-size: 0.95rem; margin-bottom: 4px; }
+    .search-result-card p { color: #6b7280; font-size: 0.82rem; margin: 0; }
+    .search-count { text-align: center; color: #999; font-size: 0.85rem; margin-bottom: 12px; }
     .sources-section {
       margin-top: 24px;
       border-top: 1px solid #fde68a;
@@ -116,6 +174,11 @@
     <h1>📿 พระไตรปิฎก</h1>
     <p class="subtitle">สังคายนา และพระสูตร</p>
     
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="ค้นหา สังคายนา พระสูตร อภิธรรม..." autocomplete="off">
+      <button class="search-clear" id="search-clear" onclick="clearSearch()">&#x2715;</button>
+    </div>
+
     <div id="breadcrumb" class="breadcrumb hidden">
       <span onclick="goHome()">หน้าหลัก</span> <span id="breadcrumb-text"></span>
     </div>
@@ -406,6 +469,114 @@
       }
       
       document.getElementById('content').innerHTML = html;
+    }
+
+    // --- Search ---
+    function searchData(query) {
+      if (!query || !data.councils) return [];
+      const q = query.toLowerCase();
+      const results = [];
+
+      // Search councils
+      for (const c of data.councils) {
+        const fields = [c.name, c.year, c.location, c.president, c.patron, c.cause, c.description, c.participants].filter(Boolean).join(' ').toLowerCase();
+        if (fields.includes(q)) {
+          results.push({ type: 'council', badge: '📜 สังคายนา', badgeClass: 'badge-council', title: `${c.id}. ${c.name}`, desc: `${c.yearShort} — ${c.location}`, action: () => showCouncilDetail(c.id) });
+        }
+
+        // Search sutras in nikayas
+        if (c.nikayas) {
+          for (const n of c.nikayas) {
+            if (n.sutras) {
+              for (const s of n.sutras) {
+                if ((s.name + ' ' + s.desc).toLowerCase().includes(q)) {
+                  results.push({ type: 'sutta', badge: '📖 พระสูตร', badgeClass: 'badge-sutta', title: s.name, desc: `${s.desc} (${n.name}, ${c.name})`, action: () => showNikayaDetail(c.id, n.name) });
+                }
+              }
+            }
+            // Search nikaya name itself
+            if ((n.name + ' ' + (n.thai || '') + ' ' + n.desc).toLowerCase().includes(q)) {
+              results.push({ type: 'sutta', badge: '📖 นิกาย', badgeClass: 'badge-sutta', title: n.name, desc: `${n.thai || ''} — ${n.count} สูตร (${c.name})`, action: () => showNikayaDetail(c.id, n.name) });
+            }
+          }
+        }
+
+        // Search abhidhamma
+        if (c.abhidharma) {
+          for (const a of c.abhidharma) {
+            if ((a.name + ' ' + a.desc).toLowerCase().includes(q)) {
+              results.push({ type: 'abhidhamma', badge: '🧠 อภิธรรม', badgeClass: 'badge-abhidhamma', title: a.name, desc: `${a.desc} (${c.name})`, action: () => showCouncilDetail(c.id) });
+            }
+          }
+        }
+
+        // Search vinaya
+        if (c.vinaya) {
+          for (const v of c.vinaya) {
+            if ((v.name + ' ' + v.desc).toLowerCase().includes(q)) {
+              results.push({ type: 'vinaya', badge: '⚖️ วินัย', badgeClass: 'badge-vinaya', title: v.name, desc: `${v.desc} (${c.name})`, action: () => showCouncilDetail(c.id) });
+            }
+          }
+        }
+      }
+
+      // Search pitakas
+      if (data.pitakas) {
+        for (const p of data.pitakas) {
+          if ((p.name + ' ' + p.desc).toLowerCase().includes(q)) {
+            results.push({ type: 'pitaka', badge: `${p.icon} ปิฎก`, badgeClass: 'badge-pitaka', title: p.name, desc: p.desc, action: () => showPitaka() });
+          }
+        }
+      }
+
+      // Deduplicate by title+type
+      const seen = new Set();
+      return results.filter(r => {
+        const key = r.type + ':' + r.title;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function renderSearchResults(results, query) {
+      if (results.length === 0) {
+        return `<div class="search-count">ไม่พบผลลัพธ์สำหรับ "${query}"</div>`;
+      }
+      let html = `<div class="search-count">พบ ${results.length} รายการ</div>`;
+      for (const r of results) {
+        html += `<div class="search-result-card" onclick="searchActions[${results.indexOf(r)}]()">
+          <h4><span class="search-badge ${r.badgeClass}">${r.badge}</span>${r.title}</h4>
+          <p>${r.desc}</p>
+        </div>`;
+      }
+      return html;
+    }
+
+    let searchActions = [];
+
+    document.getElementById('search').addEventListener('input', function() {
+      const q = this.value.trim();
+      const clearBtn = document.getElementById('search-clear');
+      clearBtn.classList.toggle('show', q.length > 0);
+
+      if (!q) {
+        render();
+        return;
+      }
+
+      const results = searchData(q);
+      searchActions = results.map(r => r.action);
+      document.getElementById('content').innerHTML = renderSearchResults(results, q);
+      document.getElementById('breadcrumb').classList.add('hidden');
+    });
+
+    function clearSearch() {
+      const input = document.getElementById('search');
+      input.value = '';
+      document.getElementById('search-clear').classList.remove('show');
+      render();
+      input.focus();
     }
 
     function goHome() {
