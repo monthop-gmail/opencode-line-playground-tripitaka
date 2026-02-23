@@ -25,4 +25,4 @@ git push
 
 ## 📞 ติดต่อ
 
-https://github.com/monthop-gmail/opencode-line/issues
+https://github.com/monthop-gmail/opencode-line-playground-tripitaka/issues
