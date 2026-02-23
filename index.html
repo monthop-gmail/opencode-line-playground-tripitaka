@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>พระไตรปิฏก - Tripitaka PWA</title>
+  <link rel="manifest" href="manifest.json?v=3">
+  <meta name="theme-color" content="#f59e0b">
+  <meta name="description" content="พระไตรปิฏก สังคยานา และพระสูตร - Tripitaka PWA">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="manifest" href="manifest.json?v=2">
-  <meta name="theme-color" content="#f59e0b">
-  <meta name="description" content="พระไตรปิฏก สังคยานา และพระสูตร - Tripitaka PWA">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📿</text></svg>">
   <style>
@@ -189,13 +189,13 @@
     let currentCouncilId = null;
 
     function saveState() {
-      localStorage.setItem('tripitaka_view', currentView);
-      localStorage.setItem('tripitaka_council', currentCouncilId || '');
+      localStorage.setItem('tripitaka_v3_view', currentView);
+      localStorage.setItem('tripitaka_v3_council', currentCouncilId || '');
     }
 
     function loadState() {
-      currentView = localStorage.getItem('tripitaka_view') || 'home';
-      currentCouncilId = localStorage.getItem('tripitaka_council') || null;
+      currentView = localStorage.getItem('tripitaka_v3_view') || 'home';
+      currentCouncilId = localStorage.getItem('tripitaka_v3_council') || null;
     }
 
     function render() {
@@ -360,7 +360,7 @@
     render();
     
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=2');
+      navigator.serviceWorker.register('sw.js?v=3');
     }
   </script>
 </body>
