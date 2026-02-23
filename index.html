@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>พระไตรปิฏก - Tripitaka PWA</title>
-  <link rel="manifest" href="manifest.json">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="manifest" href="manifest.json?v=2">
   <meta name="theme-color" content="#f59e0b">
   <meta name="description" content="พระไตรปิฏก สังคยานา และพระสูตร - Tripitaka PWA">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -333,7 +336,7 @@
     render();
     
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+      navigator.serviceWorker.register('sw.js?v=2');
     }
   </script>
 </body>
