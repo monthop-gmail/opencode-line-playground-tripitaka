@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>พระไตรปิฏก - Tripitaka PWA</title>
+  <title>พระไตรปิฎก - Tripitaka PWA</title>
   <!--VERSION:manifest-->
   <link rel="manifest" href="manifest.json?v=VERSION_PLACEHOLDER">
   <!--/VERSION-->
   <meta name="theme-color" content="#f59e0b">
-  <meta name="description" content="พระไตรปิฏก สังคยานา และพระสูตร - Tripitaka PWA">
+  <meta name="description" content="พระไตรปิฎก สังคายนา และพระสูตร - Tripitaka PWA">
   <meta http-equiv="Cache-Control" content="no-cache">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📿</text></svg>">
@@ -113,8 +113,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>📿 พระไตรปิฏก</h1>
-    <p class="subtitle">สังคยานา และพระสูตร</p>
+    <h1>📿 พระไตรปิฎก</h1>
+    <p class="subtitle">สังคายนา และพระสูตร</p>
     
     <div id="breadcrumb" class="breadcrumb hidden">
       <span onclick="goHome()">หน้าหลัก</span> <span id="breadcrumb-text"></span>
@@ -204,11 +204,11 @@
         content.innerHTML = renderHome();
       } else if (currentView === 'council') {
         breadcrumb.classList.remove('hidden');
-        document.getElementById('breadcrumb-text').innerHTML = ' > สังคยานา';
+        document.getElementById('breadcrumb-text').innerHTML = ' > สังคายนา';
         content.innerHTML = renderCouncilList();
       } else if (currentView === 'pitaka') {
         breadcrumb.classList.remove('hidden');
-        document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคยานา</span> > ปิฏก';
+        document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคายนา</span> > ปิฎก';
         content.innerHTML = renderPitakaList();
       } else if (currentView === 'detail') {
         breadcrumb.classList.remove('hidden');
@@ -239,10 +239,10 @@
       return `
         <div class="card" onclick="showCouncil()">
           <div class="card-header">
-            <h3>📜 สังคายนา 3 ครั้ง</h3>
-            <span class="count">3</span>
+            <h3>📜 สังคายนา ${data.councils ? data.councils.length : 9} ครั้ง</h3>
+            <span class="count">${data.councils ? data.councils.length : 9}</span>
           </div>
-          <p>การรวบรวมพระไตรปิฎก 3 ครั้งตลอด 234 ปี</p>
+          <p>การรวบรวมพระไตรปิฎก ตั้งแต่ พ.ศ. 1 ถึง พ.ศ. 2331 (นับตามสายเถรวาทไทย)</p>
         </div>
         <div class="card" onclick="showPitaka()">
           <div class="card-header">
@@ -260,7 +260,7 @@
         <div class="card" onclick="showCouncilDetail(${c.id})">
           <div class="card-header">
             <h3>${c.id}. ${c.name}</h3>
-            <span class="count">${c.year}</span>
+            <span class="count">${c.yearShort || c.year}</span>
           </div>
           <p>📍 ${c.location}</p>
           <p>👤 ประธาน: ${c.president || c.participants}</p>
@@ -269,7 +269,7 @@
           ${c.cause ? `<p style="font-size:0.8rem;color:#888;margin-top:4px;">สาเหตุ: ${c.cause}</p>` : ''}
           ${c.nikayas ? `<p class="count" style="display:inline-block;margin-top:8px;">สุตตันต์ 5 นิกาย</p>` : ''}
           ${c.abhidharma ? `<p class="count" style="display:inline-block;margin-top:8px;margin-left:8px;">อภิธรรม 7 คัมภีร์</p>` : ''}
-          ${c.vinaya ? `<p class="count" style="display:inline-block;margin-top:8px;margin-left:8px;">วินัยปิฏก</p>` : ''}
+          ${c.vinaya ? `<p class="count" style="display:inline-block;margin-top:8px;margin-left:8px;">วินัยปิฎก</p>` : ''}
         </div>
       `).join('');
     }
@@ -305,7 +305,7 @@
       const council = data.councils.find(c => c.id === id);
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.classList.remove('hidden');
-      document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคยานา</span> > ' + council.name;
+      document.getElementById('breadcrumb-text').innerHTML = ' > <span onclick="showCouncil()">สังคายนา</span> > ' + council.name;
       saveState();
       
       let html = `
@@ -325,7 +325,7 @@
       
       if (council.nikayas) {
         html += `
-          <h3 style="color:#92400e;margin:20px 0 10px;">📖 สุตตันตปิฏก - นิกาย</h3>
+          <h3 style="color:#92400e;margin:20px 0 10px;">📖 สุตตันตปิฎก - นิกาย</h3>
           ${council.nikayas.map((n, idx) => `
             <div class="card" onclick="showNikayaDetail(${council.id}, '${n.name}')">
               <div class="card-header">
@@ -341,7 +341,7 @@
       
       if (council.abhidharma) {
         html += `
-          <h3 style="color:#92400e;margin:20px 0 10px;">🧠 อภิธรรมปิฏก</h3>
+          <h3 style="color:#92400e;margin:20px 0 10px;">🧠 อภิธรรมปิฎก</h3>
           ${council.abhidharma.map(a => `
             <div class="card">
               <h3>${a.name}</h3>
@@ -353,12 +353,12 @@
       
       if (council.vinaya) {
         html += `
-          <h3 style="color:#92400e;margin:20px 0 10px;">⚖️ วินัยปิฏก</h3>
+          <h3 style="color:#92400e;margin:20px 0 10px;">⚖️ วินัยปิฎก</h3>
           ${council.vinaya.map(v => `
             <div class="card">
               <div class="card-header">
                 <h3>${v.name}</h3>
-                <span class="count">${v.count} ข้อ</span>
+                ${v.count ? `<span class="count">${v.count} ข้อ</span>` : ''}
               </div>
               <p>${v.desc}</p>
             </div>
@@ -380,7 +380,7 @@
       const breadcrumb = document.getElementById('breadcrumb');
       breadcrumb.classList.remove('hidden');
       document.getElementById('breadcrumb-text').innerHTML = 
-        ' > <span onclick="showCouncil()">สังคยานา</span> > <span onclick="showCouncilDetail(' + councilId + ')">' + council.name + '</span> > ' + nikayaName;
+        ' > <span onclick="showCouncil()">สังคายนา</span> > <span onclick="showCouncilDetail(' + councilId + ')">' + council.name + '</span> > ' + nikayaName;
       saveState();
       
       let html = `
