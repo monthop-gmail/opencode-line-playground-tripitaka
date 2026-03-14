@@ -41,7 +41,7 @@ jobs:
           wrangler --version
 
       - name: Deploy to Cloudflare Pages
-        run: wrangler pages deploy . --project-name=opencode-line-playground-tripitaka
+        run: wrangler pages deploy . --project-name=tripitaka-pwa
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

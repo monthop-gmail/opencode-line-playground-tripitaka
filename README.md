@@ -2,7 +2,7 @@
 
 เว็บแอป PWA สำหรับศึกษาพระไตรปิฎก สังคายนา และพระสูตร
 
-**Live**: https://tripitaka-pwa.pages.dev
+**Live**: https://tripitaka-pwa.pages.dev (เดิม: https://opencode-line-playground-tripitaka.pages.dev)
 
 ## Features
 
